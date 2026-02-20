@@ -1,1 +1,1 @@
-feat: migrate API to serverless functions for Vercel
+fix: explicitly set collection name for Config model
