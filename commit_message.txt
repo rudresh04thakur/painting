@@ -1,1 +1,1 @@
-feat: update .gitignore and clear cache
+fix: ensure database name is in connection URI
