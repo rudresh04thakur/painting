@@ -154,14 +154,14 @@ async function run() {
   await Feature.insertMany(features);
   console.log('Features seeded');
 
-  // 5. Paintings
+  // 5. Paintings — artistName must exactly match the User artist names created above
   const paintings = [
     {
       title: "Dancing Colors on a Summer Breeze",
-      artistId: artistUsers[7]._id, // Joan Miro
+      artistId: artistUsers[7]._id, // Joan Miró
       artistName: "Joan Miró",
       price: { USD: 200, original: 250 },
-      images: ["/assets/img/home1/general-art-img1.jpg"],
+      images: ["/assets/img/gallery/abstract.png"],
       style: "Abstract",
       year: 2023,
       medium: "Oil on Canvas",
@@ -171,23 +171,23 @@ async function run() {
     },
     {
       title: "Silent Echoes of the Mountains",
-      artistId: artistUsers[0]._id, // Use Frida for now or random
-      artistName: "Ansel Adams",
+      artistId: artistUsers[0]._id, // Frida Kahlo
+      artistName: "Frida Kahlo",
       price: { USD: 350, original: 400 },
-      images: ["/assets/img/home1/general-art-img2.jpg"],
+      images: ["/assets/img/gallery/landscape.png"],
       style: "Landscape",
       year: 2022,
       medium: "Photography",
-      description: "A stunning black and white photograph of mountain peaks.",
+      description: "A stunning photograph of mountain peaks.",
       stock: 1,
       featured: true
     },
     {
       title: "Urban Rhythms at Night",
-      artistId: artistUsers[1]._id,
-      artistName: "Banksy",
+      artistId: artistUsers[1]._id, // Pablo Picasso
+      artistName: "Pablo Picasso",
       price: { USD: 500 },
-      images: ["/assets/img/home1/general-art-img3.jpg"],
+      images: ["/assets/img/gallery/urban.png"],
       style: "Street Art",
       year: 2024,
       medium: "Spray Paint",
@@ -197,10 +197,10 @@ async function run() {
     },
     {
       title: "The Solitude of the Sea",
-      artistId: artistUsers[2]._id,
-      artistName: "Winslow Homer",
+      artistId: artistUsers[2]._id, // Leonardo da Vinci
+      artistName: "Leonardo da Vinci",
       price: { USD: 1200 },
-      images: ["/assets/img/home1/general-art-img4.jpg"],
+      images: ["/assets/img/gallery/landscape.png"],
       style: "Realism",
       year: 2021,
       medium: "Watercolor",
@@ -210,10 +210,10 @@ async function run() {
     },
     {
       title: "Golden Fields at Sunset",
-      artistId: artistUsers[3]._id,
-      artistName: "Claude Monet",
+      artistId: artistUsers[3]._id, // Andy Warhol
+      artistName: "Andy Warhol",
       price: { USD: 800 },
-      images: ["/assets/img/home1/general-art-img5.jpg"],
+      images: ["/assets/img/gallery/landscape.png"],
       style: "Impressionism",
       year: 2020,
       medium: "Oil on Canvas",
@@ -223,14 +223,53 @@ async function run() {
     },
     {
       title: "Portrait of a Lady",
-      artistId: artistUsers[4]._id,
+      artistId: artistUsers[4]._id, // Gustav Klimt
       artistName: "Gustav Klimt",
       price: { USD: 1500 },
-      images: ["/assets/img/home1/general-art-img6.jpg"],
+      images: ["/assets/img/gallery/portrait.png"],
       style: "Art Nouveau",
       year: 2019,
       medium: "Oil and Gold Leaf",
       description: "An elegant portrait with intricate details.",
+      stock: 1,
+      featured: true
+    },
+    {
+      title: "The Dance of Colors",
+      artistId: artistUsers[5]._id, // Henri Matisse
+      artistName: "Henri Matisse",
+      price: { USD: 950, original: 1200 },
+      images: ["/assets/img/gallery/abstract.png"],
+      style: "Fauvism",
+      year: 2022,
+      medium: "Oil on Canvas",
+      description: "Explosive colors and free brushwork celebrating pure expression.",
+      stock: 1,
+      featured: true
+    },
+    {
+      title: "Rivera's Vision",
+      artistId: artistUsers[6]._id, // Diego Rivera
+      artistName: "Diego Rivera",
+      price: { USD: 2200 },
+      images: ["/assets/img/gallery/urban.png"],
+      style: "Muralism",
+      year: 2021,
+      medium: "Fresco",
+      description: "A monumental work depicting the spirit of the people.",
+      stock: 1,
+      featured: false
+    },
+    {
+      title: "Infinity Nets",
+      artistId: artistUsers[8]._id, // Yayoi Kusama
+      artistName: "Yayoi Kusama",
+      price: { USD: 3500 },
+      images: ["/assets/img/gallery/abstract.png"],
+      style: "Contemporary",
+      year: 2023,
+      medium: "Acrylic on Canvas",
+      description: "Obsessive dot patterns creating an infinite visual universe.",
       stock: 1,
       featured: true
     }
@@ -260,14 +299,14 @@ async function run() {
       featured: true
     },
     {
-        title: "Abstract Dreams",
-        paintingId: createdPaintings[2]._id,
-        startTime: new Date(Date.now() - 86400000 * 2),
-        endTime: new Date(Date.now() + 86400000 * 5),
-        status: 'live',
-        startingBid: 300,
-        currentBid: 450,
-        featured: true
+      title: "Abstract Dreams",
+      paintingId: createdPaintings[2]._id,
+      startTime: new Date(Date.now() - 86400000 * 2),
+      endTime: new Date(Date.now() + 86400000 * 5),
+      status: 'live',
+      startingBid: 300,
+      currentBid: 450,
+      featured: true
     }
   ];
   await Auction.insertMany(auctions);
@@ -310,7 +349,7 @@ async function run() {
   console.log('FAQs seeded');
 
   // 8. Configs
-  
+
   // About Section
   const aboutConfig = {
     key: 'home_about_section',
@@ -465,18 +504,18 @@ async function run() {
   await Config.findOneAndUpdate({ key: pageAuctionsConfig.key }, pageAuctionsConfig, { upsert: true, new: true });
 
   // Site Config
-   const siteConfig = {
-     key: 'site_config',
-     value: {
-       title: 'Seasons by Ritu | Curated Art Gallery',
-       brandName: 'SEASONS',
-       brandSubtitle: 'BY RITU',
-       description: 'Discover exceptional masterpieces from around the world. Authenticity guaranteed.',
-       shippingText: 'Shipping Worldwide 🌍',
-       footerBlurb: 'Connecting art lovers with exceptional masterpieces from around the world. Authenticity guaranteed.',
-       copyright: 'Seasons by Ritu. All rights reserved.'
-     }
-   };
+  const siteConfig = {
+    key: 'site_config',
+    value: {
+      title: 'Seasons by Ritu | Curated Art Gallery',
+      brandName: 'SEASONS',
+      brandSubtitle: 'BY RITU',
+      description: 'Discover exceptional masterpieces from around the world. Authenticity guaranteed.',
+      shippingText: 'Shipping Worldwide 🌍',
+      footerBlurb: 'Connecting art lovers with exceptional masterpieces from around the world. Authenticity guaranteed.',
+      copyright: 'Seasons by Ritu. All rights reserved.'
+    }
+  };
   await Config.findOneAndUpdate({ key: siteConfig.key }, siteConfig, { upsert: true, new: true });
 
   // Home Sections Configs

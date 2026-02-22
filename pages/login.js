@@ -2,6 +2,7 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import { apiPost } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 
@@ -12,11 +13,13 @@ export default function Login() {
   const router = useRouter();
   const { redirect } = router.query;
 
-  const submit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const res = await apiPost("/auth/login", { email: email.trim(), password });
       login(res.token, res.user);
       if (redirect) router.push(redirect);
+      else router.push("/");
     } catch (e) {
       toast.error(e.message);
     }
@@ -24,11 +27,43 @@ export default function Login() {
 
   return (
     <Layout>
-      <section className="mx-auto max-w-md px-4 py-8">
-        <h1 className="text-2xl font-semibold mb-4">Login</h1>
-        <input className="border rounded px-3 py-2 w-full mb-3" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-        <input className="border rounded px-3 py-2 w-full mb-3" placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-        <button className="px-4 py-2 bg-blue-600 text-white rounded w-full" onClick={submit}>Login</button>
+      <section className="mx-auto max-w-md px-4 py-24 min-h-[60vh] flex flex-col justify-center">
+        <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+          <h1 className="text-3xl font-serif text-gray-900 mb-8 text-center">Login</h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+              <input
+                required
+                type="email"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all"
+                placeholder="name@example.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+              <input
+                required
+                type="password"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all"
+                placeholder="••••••••"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-4 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition-colors shadow-lg active:scale-[0.98] transform"
+            >
+              Sign In
+            </button>
+          </form>
+          <div className="mt-8 text-center text-sm text-gray-500">
+            Don't have an account? <Link href="/signup" className="text-gray-900 font-semibold hover:underline">Create one here</Link>
+          </div>
+        </div>
       </section>
     </Layout>
   );
