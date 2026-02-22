@@ -23,6 +23,15 @@ const siteConfigData = {
   },
 };
 
+const pageGalleryData = {
+  key: 'page_gallery',
+  value: {
+    title: 'Art Gallery',
+    description: 'Explore our curated collection of masterpieces, from classical to contemporary.',
+    backgroundImage: '/images/gallery-bg.jpg',
+  },
+};
+
 export default async function handler(req, res) {
   const { method } = req;
   const { secret } = req.query;
@@ -43,7 +52,13 @@ export default async function handler(req, res) {
         { upsert: true }
       );
 
-      res.status(200).json({ success: true, message: 'Site config seeded successfully.' });
+      await Config.updateOne(
+        { key: pageGalleryData.key },
+        { $set: pageGalleryData },
+        { upsert: true }
+      );
+
+      res.status(200).json({ success: true, message: 'Site and gallery configs seeded successfully.' });
     } catch (error) {
       res.status(500).json({ success: false, error: `Server error: ${error.message}` });
     }
