@@ -1,14 +1,17 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const os = require('os');
 const { Painting } = require('../models/Painting');
 const { authRequired, ensureRole } = require('../middleware/auth');
 const { uploadImage } = require('../util/cloudinary');
 const { escapeRegex } = require('../util/regex');
 
 const router = express.Router();
+
+const isDev = process.env.NODE_ENV !== 'production';
 const upload = multer({
-  dest: path.join(__dirname, '../uploads'),
+  dest: isDev ? path.join(__dirname, '../uploads') : os.tmpdir(),
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
@@ -21,7 +24,7 @@ router.get('/filters', async (req, res) => {
     // Get absolute min and max prices
     const maxP = await Painting.findOne().sort({ 'price.USD': -1 }).select('price.USD');
     const minP = await Painting.findOne().sort({ 'price.USD': 1 }).select('price.USD');
-    
+
     res.json({
       artists: artists.filter(Boolean).sort(),
       styles: styles.filter(Boolean).sort(),
@@ -58,7 +61,7 @@ router.get('/stats/artists', async (req, res) => {
 router.get('/', async (req, res) => {
   const { featured, artist, style, category, subcategory, min, max, minRating, sort, customizable, onSale, search } = req.query;
   const filter = {};
-  
+
   if (search) {
     const searchRegex = new RegExp(escapeRegex(search), 'i');
     filter.$or = [
@@ -72,14 +75,14 @@ router.get('/', async (req, res) => {
   }
 
   if (featured === 'true') filter.featured = true;
-  
+
   if (artist) {
     const list = artist.split(',').filter(Boolean);
     if (list.length > 0) {
       filter.artistName = { $in: list.map(a => new RegExp(`^${a}$`, 'i')) };
     }
   }
-  
+
   if (style) {
     const list = style.split(',').filter(Boolean);
     if (list.length > 0) {
@@ -106,7 +109,7 @@ router.get('/', async (req, res) => {
     if (min) filter['price.USD'].$gte = Number(min);
     if (max) filter['price.USD'].$lte = Number(max);
   }
-  
+
   if (minRating) filter['averageRating'] = { $gte: Number(minRating) };
 
   if (customizable === 'true') filter.isCustomizable = true;
@@ -115,13 +118,13 @@ router.get('/', async (req, res) => {
     // Mongo query for where original > USD
     filter.$expr = { $gt: ["$price.original", "$price.USD"] };
   }
-  
+
   let sortOption = { createdAt: -1 }; // Default: Newest
   if (sort === 'oldest') sortOption = { createdAt: 1 };
   if (sort === 'price_asc') sortOption = { 'price.USD': 1 };
   if (sort === 'price_desc') sortOption = { 'price.USD': -1 };
   if (sort === 'popular') sortOption = { popularityScore: -1 };
-  
+
   // Pagination
   const page = Math.max(1, Number(req.query.page || 1));
   const limit = Math.max(1, Number(req.query.limit || 60));
@@ -130,7 +133,7 @@ router.get('/', async (req, res) => {
   try {
     const total = await Painting.countDocuments(filter);
     const items = await Painting.find(filter).sort(sortOption).skip(skip).limit(limit);
-    
+
     res.json({
       items,
       pagination: {
