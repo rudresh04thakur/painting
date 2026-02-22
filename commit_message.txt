@@ -1,1 +1,1 @@
-fix: explicitly set collection name for Config model
+feat: update .gitignore and clear cache
