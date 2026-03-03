@@ -41,7 +41,7 @@ export default function PaintingCard({ painting }) {
 
   return (
     <div className="group relative bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-xl rounded-sm overflow-hidden border border-gray-100 hover:border-brand-pink/30 flex flex-col h-full">
-      <Link href={`/painting/${painting._id}`} className="block overflow-hidden relative aspect-[4/5] bg-gray-100 flex-shrink-0">
+      <Link href={`/painting/${painting._id}`} className="block overflow-hidden relative aspect-[4/5] bg-gray-100 flex-shrink-0 w-full">
         {/* Badges */}
         <div className="absolute top-2 left-2 z-10 flex flex-col gap-1 items-start">
             {painting.isCustomizable && (
